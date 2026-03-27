@@ -5,15 +5,13 @@ import 'package:to_do/task.dart';
 import 'package:to_do/tasks.dart';
 
 class Home extends StatefulWidget{
-  final Function addTaskCall ;
-  const Home({super.key, required this.addTaskCall});
   @override
   State<Home> createState() => _Homescreen();
 
 }
 
 class _Homescreen extends State<Home> {
-  List<Task> Tasks = [
+  List<Task> taskList = [
     Task(name: "go for shopping"),
     Task(name: "buy tools"),
     Task(name: "repair my car")
@@ -36,11 +34,17 @@ class _Homescreen extends State<Home> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom
             ),
-            child: add_task((newTaskData){
-              addTaskCall(newTaskData){
-                Tasks.add(Task(name: ));
-
-            }))),);
+            child: add_task(
+              addTaskCall: (newTaskTitle) {
+                setState(() {
+                  taskList.add(Task(name: newTaskTitle));
+                });
+                Navigator.pop(context); // يقفل الشاشة بعد الإضافة
+              },
+            ),
+        ),
+        ),
+        );
       },
       backgroundColor: Colors.lightGreen[900],
       child: Icon(Icons.add,size: 30,color: Colors.white,),),
@@ -61,12 +65,12 @@ class _Homescreen extends State<Home> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(padding: EdgeInsets.only(left: 20), child: Text("To Dos",style: TextStyle(color: Colors.black,fontSize: 30,fontWeight: FontWeight.bold),)),
+            Padding(padding: EdgeInsets.only(left: 20), child: Text("To-Do",style: TextStyle(color: Colors.black,fontSize: 30,fontWeight: FontWeight.bold),)),
             SizedBox(height: 30,),
             Container(
               padding: EdgeInsets.all(20),
               height: 500,
-              child: tasks(),
+              child: tasks(taskss: taskList),
             )
 
           ],

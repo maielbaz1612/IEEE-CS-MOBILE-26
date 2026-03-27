@@ -15,21 +15,26 @@ class _tasksState extends State<tasks> {
 
   @override
   Widget build(BuildContext context) {
-
     return ListView.builder(
-      itemCount: widget.taskss.length,
-        itemBuilder: (context ,index){
-      return task_list(
-        isChecked: widget.taskss[index].isdone,
-        taskTitel: widget.taskss[index].name,
-        checkBoxChange: (newvalue) {
-            setState(() {
-              widget.taskss[index].DoneChanged();
-
-            });
+        itemCount: widget.taskss.length,
+        itemBuilder: (context, index) {
+          return task_list(
+            isChecked: widget.taskss[index].isdone,
+            taskTitel: widget.taskss[index].name,
+            checkBoxChange: (newvalue) {
+              setState(() {
+                widget.taskss[index].DoneChanged();
+              });
             },
-      );
-    });
+            deleteTask: () {
+              setState(() {
+                widget.taskss.removeAt(index);
+              });
+            },
+          );
+        });
+  }
+}
 
 
 
@@ -43,7 +48,7 @@ class _tasksState extends State<tasks> {
 
 
 
-    // return ListView(
+// return ListView(
     //   children: [
     //     task_list(
     //       taskTitel: Tasks[0].name,
@@ -63,6 +68,3 @@ class _tasksState extends State<tasks> {
     //
     //   ],
     // );
-  }
-}
-

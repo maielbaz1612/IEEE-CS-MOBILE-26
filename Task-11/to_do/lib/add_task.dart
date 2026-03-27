@@ -3,6 +3,8 @@ import 'package:to_do/task.dart';
 import 'package:to_do/tasks.dart';
 
 class add_task extends StatelessWidget {
+  final Function addTaskCall ;
+  const add_task({super.key, required this.addTaskCall});
 
 
   @override
@@ -26,7 +28,7 @@ class add_task extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.all(Radius.circular(15))),
               width: 200,
               child: TextButton(onPressed: (){
-
+                  addTaskCall(newTaskData);
                 },
               child: Text("Add",style: TextStyle(color: Colors.lightGreen[900],fontSize: 15,fontWeight: FontWeight.bold),))),
         ],
