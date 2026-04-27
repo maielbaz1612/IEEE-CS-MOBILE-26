@@ -37,18 +37,18 @@ class _add_taskState extends State<add_task> {
     });
 
     try {
-      print('Calling addTask with: $taskTitle'); // DEBUG
+      print('Calling addTask with: $taskTitle');
       await context.read<TaskCubit>().addTask(taskTitle);
-      print('AddTask completed'); // DEBUG
+      print('AddTask completed');
 
       await Future.delayed(Duration(milliseconds: 100));
 
       if (mounted) {
-        print('Closing bottom sheet'); // DEBUG
+        print('Closing bottom sheet');
         Navigator.pop(context);
       }
     } catch (error) {
-      print('Error in _handleAdd: $error'); // DEBUG
+      print('Error in _handleAdd: $error');
       if (mounted) {
         setState(() {
           _isLoading = false;

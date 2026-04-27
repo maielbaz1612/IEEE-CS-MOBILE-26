@@ -5,119 +5,79 @@ import '../task.dart';
 import 'task_state.dart';
 
 class TaskCubit extends Cubit<TaskState> {
-  late Database database;
+  late Database _database;
 
   TaskCubit() : super(TaskInitial()) {
-    initDatabase();
+    _initDatabase();
   }
 
-  Future<void> initDatabase() async {
+  Future<void> _initDatabase() async {
     emit(TaskLoading());
     try {
-      var databasesPath = await getDatabasesPath();
-      String path = join(databasesPath, 'tasks_database.db');
+      final String path = join(await getDatabasesPath(), 'tasks_database.db');
 
-      print('Database path: $path'); // DEBUG
-
-      database = await openDatabase(
+      _database = await openDatabase(
         path,
         version: 1,
-        onCreate: (db, version) async {
-          print('Creating database...'); // DEBUG
-          await db.execute(
-              'CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, status TEXT)'
-          );
-        },
+        onCreate: (db, version) => db.execute(
+            'CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, status TEXT)'
+        ),
       );
-      print('Database opened successfully'); // DEBUG
       await loadTasks();
     } catch (e) {
-      print('Database init error: $e'); // DEBUG
-      emit(TaskError('Database init failed: $e'));
+      _safeEmit(TaskError('Database Error: $e'));
     }
   }
-  Future<void> loadTasks() async {
-    if (isClosed) return;
 
+  Future<void> loadTasks() async {
     try {
-      final List<Map<String, dynamic>> maps = await database.query('tasks');
-      print('Loaded ${maps.length} tasks'); // DEBUG
+      final List<Map<String, dynamic>> maps = await _database.query('tasks');
       final tasks = maps.map((map) => Task.fromMap(map)).toList();
-      if (!isClosed) {
-        emit(TaskLoaded(tasks));
-      }
+      _safeEmit(TaskLoaded(tasks));
     } catch (e) {
-      print('Load tasks error: $e'); // DEBUG
-      if (!isClosed) {
-        emit(TaskError('Failed to load tasks: $e'));
-      }
+      _safeEmit(TaskError('Load Error: $e'));
     }
   }
 
   Future<void> addTask(String title) async {
-    print('Adding task: $title'); // DEBUG
-
-    if (title.trim().isEmpty) {
-      print('Task title is empty'); // DEBUG
-      return;
-    }
-
-    final currentState = state;
-    if (currentState is TaskLoading) {
-      print('Already loading'); // DEBUG
-      return;
-    }
+    if (title.trim().isEmpty) return;
 
     try {
-      print('Inserting into database...'); // DEBUG
-      await database.insert('tasks', {
-        'title': title,
-        'status': 'new',
-      });
-      print('Insert successful'); // DEBUG
+      await _database.insert('tasks', {'title': title, 'status': 'new'});
       await loadTasks();
     } catch (e) {
-      print('Add task error: $e'); // DEBUG
-      if (!isClosed) {
-        emit(TaskError('Failed to add task: $e'));
-      }
+      _safeEmit(TaskError('Add Error: $e'));
     }
   }
 
   Future<void> updateTaskStatus(int id, String newStatus) async {
-    try {
-      await database.update(
-        'tasks',
-        {'status': newStatus},
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-      await loadTasks();
-    } catch (e) {
-      if (!isClosed) {
-        emit(TaskError('Failed to update task: $e'));
-      }
-    }
+    await _executeDbAction(
+          () => _database.update('tasks', {'status': newStatus}, where: 'id = ?', whereArgs: [id]),
+    );
   }
 
   Future<void> deleteTask(int id) async {
+    await _executeDbAction(
+          () => _database.delete('tasks', where: 'id = ?', whereArgs: [id]),
+    );
+  }
+
+  Future<void> _executeDbAction(Future<void> Function() action) async {
     try {
-      await database.delete(
-        'tasks',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
+      await action();
       await loadTasks();
     } catch (e) {
-      if (!isClosed) {
-        emit(TaskError('Failed to delete task: $e'));
-      }
+      _safeEmit(TaskError('Operation Failed: $e'));
     }
   }
 
+  void _safeEmit(TaskState state) {
+    if (!isClosed) emit(state);
+  }
+
   @override
-  Future<void> close() {
-    database.close();
+  Future<void> close() async {
+    await _database.close();
     return super.close();
   }
 }

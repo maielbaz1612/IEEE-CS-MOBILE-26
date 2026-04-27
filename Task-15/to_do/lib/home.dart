@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
           showModalBottomSheet(
             isScrollControlled: true,
             context: context,
-            builder: (context) => BlocProvider.value( 
+            builder: (context) => BlocProvider.value(
               value: taskCubit,
               child: SingleChildScrollView(
                 child: Container(
