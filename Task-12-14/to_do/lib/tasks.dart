@@ -17,7 +17,6 @@ class Tasks extends StatelessWidget {
             isChecked: taskss[index]['status'] == 'done',
             taskTitle: taskss[index]['title'],
             checkBoxChange: (newValue) {
-              // إذا ضغطنا على الصح، نحدث الحالة في الداتا بيز
               String newStatus = (newValue == true) ? 'done' : 'new';
               onUpdate(newStatus, taskss[index]['id']);
             },
