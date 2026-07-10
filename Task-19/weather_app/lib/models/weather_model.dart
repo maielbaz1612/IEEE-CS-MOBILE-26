@@ -1,5 +1,7 @@
 class weather_model{
   final String name;
+  final String country;
+  final String region;
   final double tempC;
   final String text;
   final String mainIcon;
@@ -10,7 +12,7 @@ class weather_model{
     required this.tempC,
     required this.text,
     required this.mainIcon,
-    required this.forecastDay
+    required this.forecastDay, required this.country, required this.region
   });
   factory weather_model.fromJson(Map<String,dynamic>json){
     return weather_model(
@@ -18,7 +20,9 @@ class weather_model{
         tempC: json['current']['temp_c'],
         text: json['current']['condition']['text'],
         mainIcon: json['current']['condition']['icon'],
-        forecastDay: (json['forecast']['forecastday']as List).map((e)=> ForecastDay.fromJson(e)).toList());
+        forecastDay: (json['forecast']['forecastday']as List).map((e)=> ForecastDay.fromJson(e)).toList(),
+        country: json['location']['country'],
+        region: json['location']['region']);
     }
 
 }
@@ -49,7 +53,7 @@ class Hour{
   factory Hour.fromJson(Map<String,dynamic>json){
     return Hour(
         time: json['time'],
-        icon: json['temp_c'],
-        temp: json['condition']['icon']);
+        temp: json['temp_c'],
+        icon: json['condition']['icon']);
   }
 }

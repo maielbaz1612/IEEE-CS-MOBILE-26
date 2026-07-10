@@ -49,14 +49,18 @@ class _HomeState extends State<Home> {
                   color: Colors.black26
               ),
               width: double.infinity,
-              height: isClicked == true ? 250 : 500,
+              height: isClicked == true ? 300 : 550,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(widget.weatherModel.name,style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 35,
                       color: Colors.white,
-                      fontWeight: FontWeight(400)),),
+                      fontWeight: FontWeight.bold),),
+                  Text('${widget.weatherModel.region},${widget.weatherModel.country}',style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black26,
+                      fontWeight: FontWeight(800)),),
                   Text('${widget.weatherModel.tempC}°c',style: TextStyle(
                       fontSize: 60,
                       color: Colors.black54,
@@ -87,7 +91,7 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 10,),
                   Expanded(
                     child: ListView.separated(
                         itemBuilder: (context, index)=> Row(

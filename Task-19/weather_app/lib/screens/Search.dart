@@ -60,14 +60,14 @@ class _SearchState extends State<Search> {
           MaterialButton(onPressed: () async {
             if(formKey.currentState!.validate()){
               await Helper().getData(searchController.text).then((value){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(weatherModel: value,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(weatherModel: value)));
               })
               ;}
           },
           color: Colors.black26,
           child: Text('Search',style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold),),)
+            color: Colors.white,
+            fontWeight: FontWeight.bold),),)
         ],
       ),
     );
